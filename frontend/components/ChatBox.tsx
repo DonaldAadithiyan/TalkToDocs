@@ -1,38 +1,68 @@
-// frontend/components/ChatBox.tsx
-import { useState, ChangeEvent, FormEvent } from 'react';
-import axios from 'axios';
+"use client"
 
-// Define types for the response data structure
-interface ChatResponse {
-  response: string;
+import type React from "react"
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardFooter } from "@/components/ui/card"
+
+// Define the props interface for the ChatBox component
+interface ChatBoxProps {
+  messages: string[]
+  onUserInput: (input: string) => void
 }
 
-const ChatBox = () => {
-  const [query, setQuery] = useState<string>('');
-  const [response, setResponse] = useState<string>('');
+const ChatBox: React.FC<ChatBoxProps> = ({ messages, onUserInput }) => {
+  const [input, setInput] = useState<string>("")
 
-  const handleQueryChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setQuery(e.target.value);
-  };
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-
-    try {
-      const res = await axios.post<ChatResponse>('http://127.0.0.1:8000/chat', { query });
-      setResponse(res.data.response);
-    } catch (error) {
-      setResponse('Error fetching response.');
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (input.trim()) {
+      onUserInput(input)
+      setInput("")
     }
-  };
+  }
 
   return (
-    <div>
-      <textarea value={query} onChange={handleQueryChange} placeholder="Ask a question..." />
-      <button onClick={handleSubmit}>Ask</button>
-      <div>{response}</div>
-    </div>
-  );
-};
+    <Card className="w-full max-w-3xl mx-auto">
+      <CardContent className="p-4 h-[60vh] overflow-y-auto">
+        <div className="space-y-4">
+          {messages.length === 0 ? (
+            <p className="text-center text-muted-foreground">Start a conversation with your AI assistant.</p>
+          ) : (
+            messages.map((message, index) => {
+              const isUserMessage = !message.startsWith("Bot:")
+              return (
+                <div key={index} className={`flex ${isUserMessage ? "justify-end" : "justify-start"}`}>
+                  <div
+                    className={`max-w-[80%] rounded-lg p-3 ${
+                      isUserMessage ? "bg-primary text-primary-foreground" : "bg-muted"
+                    }`}
+                  >
+                    <p>{message}</p>
+                  </div>
+                </div>
+              )
+            })
+          )}
+        </div>
+      </CardContent>
+      <CardFooter className="p-4 border-t">
+        <form onSubmit={handleSubmit} className="flex w-full gap-2">
+          <Input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Type your message..."
+            className="flex-1"
+          />
+          <Button type="submit" disabled={!input.trim()}>
+            Send
+          </Button>
+        </form>
+      </CardFooter>
+    </Card>
+  )
+}
 
-export default ChatBox;
+export default ChatBox
+

@@ -1,29 +1,29 @@
-// frontend/app/bot/page.tsx
+"use client"
 
-import React, { useState } from "react";
-import ChatBox from "../../components/ChatBox";
+import { useState } from "react"
+import ChatBox from "../../components/ChatBox"
 
 const BotPage = () => {
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<string[]>([])
 
   const handleUserInput = (input: string) => {
     // Add user input to messages array
-    setMessages([...messages, input]);
+    setMessages([...messages, input])
 
     // Call API to process the input and get a bot response
     // Simulate a response from the bot for now
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      "Bot: Here's a response to your query.",
-    ]);
-  };
+    setTimeout(() => {
+      setMessages((prevMessages) => [...prevMessages, "Bot: Here's a response to your query."])
+    }, 1000)
+  }
 
   return (
-    <div className="bot-page">
-      <h1>Your AI Chatbot</h1>
+    <div className="container py-8">
+      <h1 className="text-3xl font-bold mb-6 text-center">Your AI Chatbot</h1>
       <ChatBox messages={messages} onUserInput={handleUserInput} />
     </div>
-  );
-};
+  )
+}
 
-export default BotPage;
+export default BotPage
+
