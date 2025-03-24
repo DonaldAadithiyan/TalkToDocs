@@ -1,0 +1,11 @@
+fastapi
+redis
+types-redis
+uvicorn
+openai
+pypdf
+sentence_transformers
+numpy
+pymongo[srv]
+dotenv
+PyPDF2
